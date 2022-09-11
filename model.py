@@ -11,6 +11,8 @@ def parser(text):
     for line in lines:
         words = line.split()
         for word in words:
+            if sum([str(i) in word for i in range(10)]):
+                continue
             if word[-1] in (',', '.', ':', ';'):
                 yield str.lower(word[:-1])
                 yield word[-1]
@@ -72,12 +74,12 @@ class Model:
     def generate(self, length, prefix=""):
         text = list(parser(prefix))
         if len(text) < self._count_word_to_predict or \
-                text[-self._count_word_to_predict:] not in self._statistic:
+                tuple(text[-self._count_word_to_predict:]) not in self._statistic:
             prefix = tuple(self._statistic.keys())[random.randint(0, 100)]
             text += prefix
         else:
             prefix = tuple(text[-self._count_word_to_predict:])
-        print(prefix)
+
         for i in range(length - self._count_word_to_predict):
             next_word = self._get_next_word(prefix)
             prefix = prefix[1:] + (next_word,)
